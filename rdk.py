@@ -3,9 +3,9 @@ import random
 import numpy as np
 
 # Experiment parameters
-n_trials = 25
+n_trials = 10
 n_dots = 300
-coherences = [1, 5, 10, 20, 40, 80]
+coherences = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 length_coherences = len(coherences)
 dot_speed = 30 # in pixels per frame
 dot_size = 5 # in pixels
@@ -34,14 +34,19 @@ clock = core.Clock()
 
 # Instructions
 instructions = """
-In this experiment, you will see a field of white dots on a black background. 
-Your task is to judge whether the dots are moving to the left or to the right. 
-If you think the dots are moving to the left, press the LEFT arrow key. 
-If you think the dots are moving to the right, press the RIGHT arrow key. 
-Try to respond as accurately and quickly as possible. 
-There will be {} trials in total. 
-Press the SPACEBAR to begin.
-""".format(n_trials)
+Šiame eksperimente matyse vaizdus su atsitiktinai išdėliotais baltais taškais juodame fone.
+Jūsų užduotis bus atsakyti, kur (lyginant su praėjusiu vaizdu) pajuda taškai. 
+
+Jei atrodo, kad balti taškeliai pajuda į dešinę pusę - klaviatūroje spauskite rodykle į dešinę →.
+Jei atrodo, kad balti taškeliai pajuda į kairę pusę - klaviatūroje spauskite rodykle į kairę ←.
+
+Bandykite atsakyti tiksliai ir kiek įmanoma greičiau.
+
+Iš viso reikės įvertinti {} vaizdus.
+
+Pirmajame vaizde galite spausti bet kurią rodyklę - tai lyginamasis vaizdas antrajam vaizdui. 
+Spauskite "SPACE" mygtuką, kad pradėtumėte eksperimentą.
+""".format(n_trials * length_coherences)
 
 # Show instructions
 visual.TextStim(win, text=instructions, color=fixation_color, height=20).draw()
@@ -51,7 +56,7 @@ event.waitKeys(keyList=['space'])
 correct_responses = 0
 participant_data = []
 
-#Trial loop
+
 # Trial loop
 for coherence in coherences:
     print(coherence)
@@ -93,12 +98,19 @@ for coherence in coherences:
         else:
             participant_data.append("[{}, 0]".format(coherence))
 
+# display end of experiment message
+end = "Eksperimentas baigtas. Teisingų atsakymų: {}%. Ačiū už dalyvavimą!".format(round((correct_responses/(n_trials*length_coherences)*100)))
+visual.TextStim(win, text=end, color=fixation_color, height=20).draw()
+win.flip()
+core.wait(5)
+win.close()
+core.quit()
+
+
+
 # Save participant data
 with open('results.txt', 'w') as f:
     f.write(" ".join(participant_data))
-
-# Print the accuracy
-print("Participant's accuracy: {}%".format((correct_responses/(n_trials*(len(coherences)))*100)))
 
 # Close the window and quit the program
 win.close()
